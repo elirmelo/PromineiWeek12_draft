@@ -18,7 +18,6 @@ class TestDemoTest {
 	private TestDemo testDemo;
 	public TestDemo mockDemo;
 	
-
 	@BeforeEach
 	void setUp() throws Exception {
 		testDemo = new TestDemo();
@@ -27,30 +26,36 @@ class TestDemoTest {
 
 	@ParameterizedTest
 	@MethodSource("TestDemoTest#argumentsForAddPositive")
-	void assertThatTwoPositiveNumbersAreAddedCorrectly(int a, int b, int expected, boolean expectException) 
+	void assertThatTwoPositiveNumbersAreAddedCorrectly(int a, int b, int expected, 
+			boolean expectException) throws Exception  
 	{
-		if(!expectException) 
+		try 
 		{
-			  assertThat(testDemo.addPositive(a, b)).isEqualTo(expected);
-		} else 
-		{
-			 assertThatThrownBy( 
-					() -> testDemo.addPositive(a, b)).
-					isInstanceOf(IllegalArgumentException.class);
+			if(!expectException) 
+			{
+				assertThat(testDemo.addPositive(a, b)).isEqualTo(expected);
+				System.out.println(" - Right Parameters");
+			} else 
+			{
+				assertThatThrownBy(()->testDemo.addPositive(a, b)).
+				isInstanceOf(IllegalArgumentException.class).hasNoCause();
+				//throw new IllegalArgumentException(Exception);
+			}
 
+		} catch (IllegalArgumentException ex) {
+		System.out.println(ex.getMessage());
+		
 		}
-
 	}
 	
 	public static Stream<Arguments> argumentsForAddPositive() 
 	{
 		return Stream.of(arguments(2, 4, 6, false),
-				arguments(2, 4, 6, true),
+				arguments(2, 4, 6, false),
 				arguments(8, 5, 13, false), 
 				arguments(30, 0, 30, false), 
 				arguments(0, 0, 0, false),
 				arguments(-5, 4, -2, false));
-		
 	}
 	
 	@Test
@@ -59,7 +64,5 @@ class TestDemoTest {
 		doReturn(5).when(mockDemo).getRandomInt();
 		int fiveSquared = mockDemo.randomNumberSquared();
 		assertThat(fiveSquared).isEqualTo(25);
-		
 	}
-
 }
